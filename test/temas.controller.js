@@ -1,20 +1,19 @@
-
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const expect = require('chai').expect;
 const mysql  = require('mysql');
+const config = require('./config')
 
 chai.use(chaiHttp);
 
-const url= 'http://localhost:3000/api';
+const url= config.URL_API
 
 const connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : '',
-  database : 'typeorm'
+  host     : config.DB_HOST,
+  user     : config.DB_USER,
+  password : config.DB_PASSWORD,
+  database : config.DB_NAME
 });
-
 
 describe('API /Temas', () => {    
   before(function() {          
