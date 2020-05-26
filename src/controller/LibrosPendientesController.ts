@@ -5,6 +5,7 @@ import * as HttpStatus from  'http-status-codes'
 import { LibroPendiente  } from '../entity/LibroPendiente'
 import { Editorial  } from '../entity/Editorial'
 import * as Message from '../messages'
+import Util from '../util/Util'
 
 export class LibrosPendientesController {
     static obtenerLibros = async (req: Request, res: Response) => {
@@ -48,7 +49,7 @@ export class LibrosPendientesController {
     static obtenerLibro = async (req: Request, res: Response) => {
         const { id } = req.params        
 
-        const existe = await LibrosPendientesController.existeLibro(+id)
+        const existe = await Util.ExisteLibro(+id)
 
         if (!existe) {
             return res.status(HttpStatus.NOT_FOUND).json({ 
@@ -87,29 +88,10 @@ export class LibrosPendientesController {
         })
     }
 
-    private static existeEditorial = async (id: number): Promise<boolean> => {
-        try {
-            await getRepository(Editorial).findOneOrFail(id)    
-            return true
-        } catch (e) {
-            return false
-        }            
-    }
-
-    private static existeLibro = async (id: number): Promise<boolean> => {
-        try {
-            await getRepository(LibroPendiente).findOneOrFail(id)    
-            return true
-        } catch (e) {
-            return false
-        }            
-    }
-
     static crearLibro = async (req: Request, res: Response) => {
         const { titulo, observaciones, editorial } = req.body          
                
-        // Validamos si la editorial existe
-        const existe = await LibrosPendientesController.existeEditorial(editorial)     
+        const existe = await Util.ExisteEditorial(+editorial)
 
         if (!existe) {
             return res.status(HttpStatus.BAD_REQUEST).json({ 
@@ -122,18 +104,20 @@ export class LibrosPendientesController {
         libro.titulo = titulo
         libro.observaciones = observaciones
         libro.editorial = await getRepository(Editorial).findOne(editorial)
-
-        // Validamos el modelo
+        
         const errors = await validate(libro, { validationError: { target: false } })
         if (errors.length > 0) {
-            return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: errors })
+            return res.status(HttpStatus.BAD_REQUEST).json({ 
+                success: false, 
+                message: Util.ObtenerMensajeError(errors)
+            })
         }
 
         const repo = getRepository(LibroPendiente)                
         
         try {
             await repo.save(libro)
-            res.status(HttpStatus.OK).json({ 
+            res.status(HttpStatus.CREATED).json({ 
                 success: true, 
                 data: libro,
                 message: Message.LIBRO_REGISTRADO_CORRECTAMENTE
@@ -150,7 +134,7 @@ export class LibrosPendientesController {
     static borrarLibro = async (req: Request, res: Response) => {
         const { id } = req.params     
         
-        const existe = await LibrosPendientesController.existeLibro(+id)
+        const existe = await Util.ExisteEditorial(+id)
 
         if (!existe) {
             return res.status(HttpStatus.NOT_FOUND).json({ 
@@ -175,10 +159,9 @@ export class LibrosPendientesController {
     }
 
     static actualizarLibro = async (req: Request, res: Response) => {
-        const { id } = req.params     
+        const { id } = req.params             
         
-        // Comprobamos que exista el libro a eliminar
-        let existe = await LibrosPendientesController.existeLibro(+id)
+        let existe = await Util.ExisteLibro(+id)
 
         if (!existe) {
             return res.status(HttpStatus.NOT_FOUND).json({ 
@@ -189,8 +172,7 @@ export class LibrosPendientesController {
 
         const { titulo, observaciones, editorial } = req.body
 
-        // Comprobamos que existe la editorial antes de actualizar
-        existe = await LibrosPendientesController.existeEditorial(editorial)     
+        existe = await Util.ExisteEditorial(+editorial)
 
         if (!existe) {
             return res.status(HttpStatus.BAD_REQUEST).json({ 
@@ -200,13 +182,12 @@ export class LibrosPendientesController {
         }
 
         let libro = getRepository(LibroPendiente).create(req.body)
-
-        // Validamos el modelo
-        const errors = await validate(libro, { validationError: { target: false } })
+        
+        const errors = await validate(libro)
         if (errors.length > 0) {
             return res.status(HttpStatus.BAD_REQUEST).json({ 
                 success: false, 
-                message: errors 
+                message: Util.ObtenerMensajeError(errors)
             })
         }
 

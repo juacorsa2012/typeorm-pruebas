@@ -2,6 +2,7 @@ import { getRepository } from  'typeorm'
 import { Tema } from '../entity/Tema';
 import { Fabricante } from '../entity/Fabricante';
 import { Editorial } from '../entity/Editorial';
+import { LibroPendiente } from '../entity/LibroPendiente';
   
 export default class Util {
     static ExisteTema = async (id: number): Promise<boolean> => {
@@ -31,6 +32,14 @@ export default class Util {
         }               
     }   
 
+    static ExisteLibro = async (id: number): Promise<boolean> => {
+        try {
+            await getRepository(LibroPendiente).findOneOrFail(id)    
+            return true
+        } catch (e) {
+            return false  
+        }               
+    }   
 
 
 

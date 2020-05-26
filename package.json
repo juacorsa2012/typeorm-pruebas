@@ -34,6 +34,6 @@
       "start": "ts-node src/index.ts",
       "tsc": "tsc",
       "dev": "set debug=* && ts-node-dev --respawn --transpileOnly ./src/index.ts",
-      "test": "cls && mocha --exit"
+      "test": "cls && mocha --exit --watch"
    }
 }
