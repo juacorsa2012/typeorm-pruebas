@@ -52,7 +52,16 @@ describe('API /LibrosPendientes', () => {
         });
     });
     
-    
+    it("debe devolver el total de temas registrados", function (done) {
+        chai.request(url).get('/libros-pendientes/count').end((err, res) => {
+            if (err) done(err);
+            expect(res).to.have.status(200)
+            expect(res.body).to.have.property('success').to.be.equal(true)
+            expect(res.body).to.have.property('count')
+            done();
+        });
+      });
+        
     
 
 })

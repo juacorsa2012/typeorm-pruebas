@@ -78,6 +78,15 @@ export class LibrosPendientesController {
         }
     }
 
+    static contarLibros = async (req: Request, res: Response) => {
+        const total = await getRepository(LibroPendiente).count()              
+
+        return res.status(HttpStatus.OK).json({
+            success: true,
+            count: total
+        })
+    }
+
     private static existeEditorial = async (id: number): Promise<boolean> => {
         try {
             await getRepository(Editorial).findOneOrFail(id)    

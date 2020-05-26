@@ -4,9 +4,10 @@ import { LibrosPendientesController } from '../controller/LibrosPendientesContro
 const router = Router()
 
 router.get('/libros-pendientes', LibrosPendientesController.obtenerLibros)
-router.get('/libros-pendientes/:id', LibrosPendientesController.obtenerLibro)
+router.get('/libros-pendientes/:id(\\d+)/', LibrosPendientesController.obtenerLibro)
 router.post('/libros-pendientes', LibrosPendientesController.crearLibro)
-router.delete('/libros-pendientes/:id', LibrosPendientesController.borrarLibro)
-router.put('/libros-pendientes/:id', LibrosPendientesController.actualizarLibro)
+router.delete('/libros-pendientes/:id(\\d+)/', LibrosPendientesController.borrarLibro)
+router.put('/libros-pendientes/:id(\\d+)/', LibrosPendientesController.actualizarLibro)
+router.get('/libros-pendientes/count', LibrosPendientesController.contarLibros)
 
 export default router

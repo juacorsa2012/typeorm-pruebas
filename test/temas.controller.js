@@ -15,6 +15,8 @@ const connection = mysql.createConnection({
   database : config.DB_NAME
 });
 
+https://github.com/chaijs/chai-http
+
 describe('API /Temas', () => {    
   before(function() {          
     connection.query('TRUNCATE TABLE temas', () => {})                          
@@ -52,6 +54,16 @@ describe('API /Temas', () => {
         if (err) done(err);
         expect(res).to.have.status(404)
         expect(res.body).to.have.property('success').to.be.equal(false)      
+        done();
+    });
+  });
+
+  it("debe devolver el total de temas registrados", function (done) {
+    chai.request(url).get('/temas/count').end((err, res) => {
+        if (err) done(err);
+        expect(res).to.have.status(200)
+        expect(res.body).to.have.property('success').to.be.equal(true)
+        expect(res.body).to.have.property('count')
         done();
     });
   });

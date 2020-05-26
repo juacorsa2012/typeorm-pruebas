@@ -45,6 +45,15 @@ export class TemasController {
         }
     }
 
+    static contarTemas = async (req: Request, res: Response) => {
+        const total = await getRepository(Tema).count()              
+
+        return res.status(HttpStatus.OK).json({
+            success: true,
+            count: total
+        })
+    }
+
     static obtenerTemas = async (req: Request, res: Response) => {        
         const { nombre, ordenar } = req.query
 
