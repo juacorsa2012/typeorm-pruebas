@@ -15,11 +15,10 @@ const connection = mysql.createConnection({
   database : config.DB_NAME
 });
 
-https://github.com/chaijs/chai-http
-
 describe('API /Temas', () => {    
   before(function() {          
-    connection.query('TRUNCATE TABLE temas', () => {})                          
+    connection.query('DELETE FROM temas', () => {})                          
+    connection.query('ALTER TABLE temas AUTO_INCREMENT = 1', () => {})
     connection.query('INSERT INTO temas SET ?', { nombre: "Tema 1" }, () => {})       
     connection.query('INSERT INTO temas SET ?', { nombre: "Tema 2" }, () => {})       
     connection.query('INSERT INTO temas SET ?', { nombre: "Tema 3" }, () => {})       
@@ -147,5 +146,14 @@ describe('API /Temas', () => {
         done();
     });
   });
-})
 
+  it("debe devolver un error 400 si intentamos actualizar un tema con nombre superior a 40 caracteres", function (done) {
+    const nombre = Array(50).join("a") 
+    chai.request(url).put('/temas/1').send({nombre}).end((err, res) => {  
+        if (err) done(err);      
+        expect(res).to.have.status(400)
+        expect(res.body).to.have.property('success').to.be.equal(false)      
+        done();
+    });
+  });
+})

@@ -5,25 +5,26 @@ import * as HttpStatus from  'http-status-codes'
 import * as Message from '../messages'
 import { Fabricante } from '../entity/Fabricante'
 import Util from  '../util/Util'
+
 // https://www.bookstack.cn/read/TypeORM/select-query-builder.md#Adding%20%3Ccode%3EORDER%20BY%3C/code%3E%20expression
 
 export class FabricantesController {
     static crearFabricante = async (req: Request, res: Response) => {               
         const fabricante = getRepository(Fabricante).create(req.body)        
 
-        const errors = await validate(fabricante, { validationError: { target: false } })
+        const errors = await validate(fabricante)
 
         if (errors.length > 0) {
             return res.status(400).json({ 
                 success: false, 
-                message: errors
+                message: Util.ObtenerMensajeError(errors)
             })
         }
 
         const repo = getRepository(Fabricante)
         try {
             await repo.save(fabricante)
-            res.status(HttpStatus.OK).json({ 
+            res.status(HttpStatus.CREATED).json({ 
                 success: true, 
                 data: fabricante,
                 message: Message.FABRICANTE_REGISTRADO_CORRECTAMENTE
@@ -47,14 +48,12 @@ export class FabricantesController {
         const { nombre, ordenar } = req.query
 
         const repo = getRepository(Fabricante)
-        const query = repo.createQueryBuilder('fabricante')       
+        const query = repo.createQueryBuilder('fabricante')               
         
-        // http://localhost:3000?nombre=nodejs
         if (nombre) {
             query.andWhere('fabricante.nombre LIKE :nombre', { nombre: `%${nombre}%` })
         }
-
-        // http://localhost:3000?ordenar=nombre:asc
+        
         if (ordenar) {            
             const direccion: string = ordenar.toString().split(':')[1].toUpperCase()
             if (direccion === 'DESC') {
@@ -106,6 +105,15 @@ export class FabricantesController {
         }        
     }
 
+    static contarFabricantes = async (req: Request, res: Response) => {
+        const total = await getRepository(Fabricante).count()              
+
+        return res.status(HttpStatus.OK).json({
+            success: true,
+            count: total
+        })
+    }
+
     static actualizarFabricante = async (req: Request, res: Response) => {
         const { id } = req.params
         
@@ -120,12 +128,12 @@ export class FabricantesController {
 
         let fabricante = getRepository(Fabricante).create(req.body)        
 
-        const errors = await validate(fabricante, { validationError: { target: false } })
+        const errors = await validate(fabricante)
 
         if (errors.length > 0) {
             return res.status(HttpStatus.BAD_REQUEST).json({ 
                 success: false, 
-                message: errors 
+                message: Util.ObtenerMensajeError(errors)
             })
         }
 
