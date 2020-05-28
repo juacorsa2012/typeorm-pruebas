@@ -5,6 +5,7 @@ import * as HttpStatus from  'http-status-codes'
 import { TutorialPendiente  } from '../entity/TutorialPendiente'
 import { Fabricante  } from '../entity/Fabricante'
 import * as Message from '../messages'
+import Util from '../util/Util'
 
 export class TutorialesPendientesController {
     static obtenerTutoriales = async (req: Request, res: Response) => {
@@ -48,7 +49,7 @@ export class TutorialesPendientesController {
     static obtenerTutorial = async (req: Request, res: Response) => {
         const { id } = req.params        
 
-        const existe = await TutorialesPendientesController.existeTutorial(+id)
+        const existe = await Util.ExisteTutorialPendiente(+id)
 
         if (!existe) {
             return res.status(HttpStatus.NOT_FOUND).json({ 
@@ -79,10 +80,9 @@ export class TutorialesPendientesController {
     }
 
     static crearTutorial = async (req: Request, res: Response) => {
-        const { titulo, observaciones, fabricante } = req.body          
-               
-        // Validamos si la editorial existe
-        const existe = await TutorialesPendientesController.existeFabricante(fabricante)
+        const { titulo, observaciones, fabricante } = req.body                         
+        
+        const existe = await Util.ExisteFabricante(fabricante)
 
         if (!existe) {
             return res.status(HttpStatus.BAD_REQUEST).json({ 
@@ -95,18 +95,20 @@ export class TutorialesPendientesController {
         tutorial.titulo = titulo
         tutorial.observaciones = observaciones
         tutorial.fabricante = await getRepository(Fabricante).findOne(fabricante)
-
-        // Validamos el modelo
-        const errors = await validate(tutorial, { validationError: { target: false } })
+        
+        const errors = await validate(tutorial)
         if (errors.length > 0) {
-            return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: errors })
+            return res.status(HttpStatus.BAD_REQUEST).json({ 
+                success: false, 
+                message: Util.ObtenerMensajeError(errors)
+            })
         }
 
         const repo = getRepository(TutorialPendiente)
         
         try {
             await repo.save(tutorial)
-            res.status(HttpStatus.OK).json({ 
+            res.status(HttpStatus.CREATED).json({ 
                 success: true, 
                 data: tutorial,
                 message: Message.TUTORIAL_REGISTRADO_CORRECTAMENTE
@@ -123,7 +125,7 @@ export class TutorialesPendientesController {
     static borrarTutorial = async (req: Request, res: Response) => {
         const { id } = req.params     
         
-        const existe = await TutorialesPendientesController.existeTutorial(+id)
+        const existe = await Util.ExisteTutorialPendiente(+id)
 
         if (!existe) {
             return res.status(HttpStatus.NOT_FOUND).json({ 
@@ -147,10 +149,19 @@ export class TutorialesPendientesController {
         }
     }
 
+    static contarTutoriales = async (req: Request, res: Response) => {
+        const total = await getRepository(TutorialPendiente).count()              
+
+        return res.status(HttpStatus.OK).json({
+            success: true,
+            count: total
+        })
+    }
+
     static actualizarTutorial = async (req: Request, res: Response) => {
         const { id } = req.params             
         
-        let existe = await TutorialesPendientesController.existeTutorial(+id)
+        let existe = await Util.ExisteTutorialPendiente(+id)
 
         if (!existe) {
             return res.status(HttpStatus.NOT_FOUND).json({ 
@@ -161,7 +172,7 @@ export class TutorialesPendientesController {
 
         const { titulo, observaciones, fabricante } = req.body
         
-        existe = await TutorialesPendientesController.existeFabricante(fabricante)     
+        existe = await Util.ExisteFabricante(fabricante)
 
         if (!existe) {
             return res.status(HttpStatus.BAD_REQUEST).json({ 
@@ -171,13 +182,12 @@ export class TutorialesPendientesController {
         }
 
         let tutorial = getRepository(TutorialPendiente).create(req.body)
-
-        // Validamos el modelo
-        const errors = await validate(tutorial, { validationError: { target: false } })
+        
+        const errors = await validate(tutorial)
         if (errors.length > 0) {
             return res.status(HttpStatus.BAD_REQUEST).json({ 
                 success: false, 
-                message: errors 
+                message: Util.ObtenerMensajeError(errors)
             })
         }
 
@@ -189,6 +199,7 @@ export class TutorialesPendientesController {
             tutorial.observaciones = observaciones
             tutorial.fabricante = fabricante
             await repo.save(tutorial)
+
             return res.status(HttpStatus.CREATED).json({ 
                 success: true, 
                 message: Message.TUTORIAL_ACTUALIZADO_CORRECTAMENTE
@@ -201,22 +212,4 @@ export class TutorialesPendientesController {
             })            
         }
     }
-
-    private static existeFabricante = async (id: number): Promise<boolean> => {
-        try {
-            await getRepository(Fabricante).findOneOrFail(id)    
-            return true
-        } catch (e) {
-            return false
-        }            
-    }
-
-    private static existeTutorial = async (id: number): Promise<boolean> => {
-        try {
-            await getRepository(TutorialPendiente).findOneOrFail(id)    
-            return true
-        } catch (e) {
-            return false
-        }            
-     }
 }

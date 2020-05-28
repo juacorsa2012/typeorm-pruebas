@@ -3,6 +3,7 @@ import { Tema } from '../entity/Tema';
 import { Fabricante } from '../entity/Fabricante';
 import { Editorial } from '../entity/Editorial';
 import { LibroPendiente } from '../entity/LibroPendiente';
+import { TutorialPendiente } from '../entity/TutorialPendiente';
   
 export default class Util {
     static ExisteTema = async (id: number): Promise<boolean> => {
@@ -41,6 +42,14 @@ export default class Util {
         }               
     }   
 
+    static ExisteTutorialPendiente = async (id: number): Promise<boolean> => {
+        try {
+            await getRepository(TutorialPendiente).findOneOrFail(id)    
+            return true
+        } catch (e) {
+            return false  
+        }               
+    }   
 
 
 
