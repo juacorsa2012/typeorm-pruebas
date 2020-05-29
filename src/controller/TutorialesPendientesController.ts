@@ -9,7 +9,7 @@ import Util from '../util/Util'
 
 export class TutorialesPendientesController {
     static obtenerTutoriales = async (req: Request, res: Response) => {
-        const { titulo, ordenar } = req.query
+        const { titulo, ordenar, fabricante } = req.query
         const repo = getRepository(TutorialPendiente)
 
         const query = repo
@@ -18,6 +18,10 @@ export class TutorialesPendientesController {
 
         if (titulo) {
             query.andWhere('tutorial.titulo LIKE :titulo', { titulo: `%${titulo}%` })
+        }
+
+        if (fabricante) {
+            query.andWhere('tutorial.fabricante = :fabricante', { fabricante: `${fabricante}` })
         }
     
         if (ordenar) {            

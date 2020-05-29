@@ -1,28 +1,19 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const expect = require('chai').expect;
-const mysql  = require('mysql');
 const config = require('./config')
 
 chai.use(chaiHttp);
 
 const url= config.URL_API
 
-const connection = mysql.createConnection({
-  host     : config.DB_HOST,
-  user     : config.DB_USER,
-  password : config.DB_PASSWORD,
-  database : config.DB_NAME
-});
-
 describe('API /Temas', () => {    
   before(function() {          
-    connection.query('DELETE FROM temas', () => {})                          
-    connection.query('ALTER TABLE temas AUTO_INCREMENT = 1', () => {})
-    connection.query('INSERT INTO temas SET ?', { nombre: "Tema 1" }, () => {})       
-    connection.query('INSERT INTO temas SET ?', { nombre: "Tema 2" }, () => {})       
-    connection.query('INSERT INTO temas SET ?', { nombre: "Tema 3" }, () => {})       
-    connection.query('INSERT INTO temas SET ?', { nombre: "Tema 4" }, () => {})            
+    config.connection.query('DELETE FROM temas', () => {})                              
+    config.connection.query('INSERT INTO temas SET ?', { id: 1, nombre: "Tema 1" }, () => {})       
+    config.connection.query('INSERT INTO temas SET ?', { id: 2, nombre: "Tema 2" }, () => {})       
+    config.connection.query('INSERT INTO temas SET ?', { id: 3, nombre: "Tema 3" }, () => {})       
+    config.connection.query('INSERT INTO temas SET ?', { id: 4, nombre: "Tema 4" }, () => {})            
   }) 
 
   it("debe devolver todos los temas", function (done) {

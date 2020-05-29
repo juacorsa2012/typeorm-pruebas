@@ -19,7 +19,7 @@ export const FABRICANTE_NO_EXISTE = 'El fabricante no existe en la base de datos
 export const TUTORIAL_NO_ENCONTRADO = 'El tutorial no existe en la base de datos'
 export const TUTORIAL_REGISTRADO_CORRECTAMENTE = 'Tutorial registrado correctamente'
 export const TUTORIAL_ACTUALIZADO_CORRECTAMENTE = 'Tutorial actualizado correctamente'
-export const TUTORIAL_BORRADO_CORRECTAMENTE = 'Tutorial borrado correctamente'
+export const TUTORIAL_BORRADO_CORRECTAMENTE = 'El tutorial se ha borrado de la base de datos correctamente'
 
 export const EDITORIAL_REGISTRADA_CORRECTAMENTE = 'Editorial registrada correctamente'
 export const EDITORIAL_ACTUALIZADA_CORRECTAMENTE = 'Editorial actualizada correctamente'

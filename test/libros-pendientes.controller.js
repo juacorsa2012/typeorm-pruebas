@@ -1,32 +1,22 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const expect = require('chai').expect;
-const mysql  = require('mysql');
 const config = require('./config')
 
 chai.use(chaiHttp);
 
 const url = config.URL_API
 
-const connection = mysql.createConnection({
-    host     : config.DB_HOST,
-    user     : config.DB_USER,
-    password : config.DB_PASSWORD,
-    database : config.DB_NAME
-});
-  
 describe('API /LibrosPendientes', () => {    
     before(function() {          
-      connection.query('DELETE FROM editoriales', () => {})
-      connection.query('DELETE FROM libros_pendientes', () => {})
-      
-      connection.query('INSERT INTO editoriales SET ?', {id: 1, nombre: "Editorial 1" }, () => {})       
-      connection.query('INSERT INTO editoriales SET ?', {id:2, nombre: "Editorial 2" }, () => {})      
-      
-      connection.query('INSERT INTO libros_pendientes SET ?', { 
+      config.connection.query('DELETE FROM editoriales', () => {})
+      config.connection.query('DELETE FROM libros_pendientes', () => {})      
+      config.connection.query('INSERT INTO editoriales SET ?', {id: 1, nombre: "Editorial 1" }, () => {})       
+      config.connection.query('INSERT INTO editoriales SET ?', {id:2, nombre: "Editorial 2" }, () => {})      
+      config.connection.query('INSERT INTO libros_pendientes SET ?', { 
           id: 1, titulo: "Titulo 1", observaciones: "Observaciones 1", editorialId: 1  }, () => {}
       )       
-      connection.query('INSERT INTO libros_pendientes SET ?', { 
+      config.connection.query('INSERT INTO libros_pendientes SET ?', { 
           id: 2, titulo: "Titulo 2", observaciones: "Observaciones 2", editorialId: 2  }, () => {}
       )       
     }) 
@@ -42,6 +32,18 @@ describe('API /LibrosPendientes', () => {
         });
     });
 
+    it("debe devolver todos los libros pendientes filtrado por una editorial", function (done) {
+      chai.request(url).get('/libros-pendientes').query({editorial: 1}).end((err, res) => {
+          if (err) done(err);
+          expect(res).to.have.status(200)
+          expect(res.body).to.have.property('success').to.be.equal(true)
+          expect(res.body).to.have.property('count')
+          expect(res.body).to.have.property('data')               
+          done();
+      });
+    });
+
+
     it("debe devolver un libro", function (done) {
         chai.request(url).get('/libros-pendientes/1').end((err, res) => {
             if (err) done(err);
@@ -53,7 +55,7 @@ describe('API /LibrosPendientes', () => {
             expect(res.body).to.have.property('data').property('observaciones').to.be.equal('Observaciones 1')
             done();
         });
-    });
+    });    
 
     it("debe devolver un error 404 al buscar un libro que no existe", function (done) {
         chai.request(url).get('/libros-pendientes/99').end((err, res) => {
@@ -73,9 +75,9 @@ describe('API /LibrosPendientes', () => {
             expect(res.body).to.have.property('count')
             done();
         });
-    });
-        
-      it("debe insertar un nuevo libro", function (done) {
+    }); 
+    
+    it("debe insertar un nuevo libro", function (done) {
         const libro = { titulo: 'Titulo 1', observaciones: 'Observaciones', editorial: 1 }
 
         chai.request(url).post('/libros-pendientes').send(libro).end((err, res) => {  
@@ -84,7 +86,7 @@ describe('API /LibrosPendientes', () => {
             expect(res.body).to.have.property('success').to.be.equal(true)      
             done();
         });
-      });
+    });
 
       it("debe insertar un nuevo libro aunque no indiquemos las observaciones", function (done) {
         const libro = { titulo: 'Titulo 1', observaciones: '', editorial: 1 }
@@ -184,5 +186,4 @@ describe('API /LibrosPendientes', () => {
             done();
         });
       });      
-
 })

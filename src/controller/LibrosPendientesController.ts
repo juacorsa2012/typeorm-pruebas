@@ -9,7 +9,7 @@ import Util from '../util/Util'
 
 export class LibrosPendientesController {
     static obtenerLibros = async (req: Request, res: Response) => {
-        const { titulo, ordenar } = req.query
+        const { titulo, ordenar, editorial } = req.query
         const librosPendientesRepository = getRepository(LibroPendiente) 
 
         const query = librosPendientesRepository
@@ -18,6 +18,10 @@ export class LibrosPendientesController {
 
         if (titulo) {
             query.andWhere('libro.titulo LIKE :titulo', { titulo: `%${titulo}%` })
+        }
+
+        if (editorial) {
+            query.andWhere('libro.editorial = :editorial', { editorial: `${editorial}` })
         }
     
         if (ordenar) {            
