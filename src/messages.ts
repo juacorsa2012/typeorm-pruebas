@@ -29,5 +29,5 @@ export const EDITORIAL_NO_EXISTE = 'La editorial no existe en la base de datos'
 export const IDIOMA_REGISTRADO_CORRECTAMENTE = 'Idioma registrado correctamente'
 export const IDIOMA_ACTUALIZADO_CORRECTAMENTE = 'Idioma actualizado correctamente'
 export const IDIOMA_YA_EXISTE = 'El idioma ya existe en la base de datos'
-export const IDIOMA_NO_EXISTE = 'El idioma no existe en la base de datos'
+export const IDIOMA_NO_ENCONTRADO = 'El idioma no existe en la base de datos'
 

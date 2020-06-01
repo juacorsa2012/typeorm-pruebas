@@ -2,6 +2,7 @@ import { getRepository } from  'typeorm'
 import { Tema } from '../entity/Tema';
 import { Fabricante } from '../entity/Fabricante';
 import { Editorial } from '../entity/Editorial';
+import { Idioma } from '../entity/Idioma';
 import { LibroPendiente } from '../entity/LibroPendiente';
 import { TutorialPendiente } from '../entity/TutorialPendiente';
   
@@ -33,6 +34,15 @@ export default class Util {
         }               
     }   
 
+    static ExisteIdioma = async (id: number): Promise<boolean> => {
+        try {
+            await getRepository(Idioma).findOneOrFail(id)    
+            return true
+        } catch (e) {
+            return false  
+        }               
+    }   
+
     static ExisteLibro = async (id: number): Promise<boolean> => {
         try {
             await getRepository(LibroPendiente).findOneOrFail(id)    
@@ -51,8 +61,6 @@ export default class Util {
         }               
     }   
 
-
-
     static ObtenerMensajeError(errors: any): string {    
         if (errors[0].constraints['maxLength']) {
             return errors[0].constraints['maxLength']
@@ -60,6 +68,5 @@ export default class Util {
         else if (errors[0].constraints['isNotEmpty']) {
             return errors[0].constraints['isNotEmpty']
         } else return ''
-
     }     
 }   

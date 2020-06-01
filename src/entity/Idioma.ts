@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, Unique } from "typeorm";
 import { MaxLength, IsNotEmpty } from "class-validator";
 
-@Entity('temas')
+@Entity('idiomas')
 @Unique(['nombre'])
-export class Tema {
+export class Idioma {
     @PrimaryGeneratedColumn()
     id: number;
 
