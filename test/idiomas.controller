@@ -7,14 +7,14 @@ chai.use(chaiHttp);
 
 const url= config.URL_API
 
-describe('API /Temas', () => {    
+describe('API /Idiomas', () => {    
     before(function() {          
         config.connection.query('DELETE FROM idiomas', () => {})                              
         config.connection.query('INSERT INTO idiomas SET ?', { id: 1, nombre: "Idioma 1" }, () => {})       
         config.connection.query('INSERT INTO idiomas SET ?', { id: 2, nombre: "Idioma 2" }, () => {})       
         config.connection.query('INSERT INTO idiomas SET ?', { id: 3, nombre: "Idioma 3" }, () => {})       
         config.connection.query('INSERT INTO idiomas SET ?', { id: 4, nombre: "Idioma 4" }, () => {})            
-      }) 
+    }) 
     
     it("debe devolver todos los idiomas", function (done) {
         chai.request(url).get('/idiomas').end((err, res) => {

@@ -13,11 +13,25 @@ const connection = mysql.createConnection({
   database : DB_NAME
 });
 
+const cleanDB = () => {
+  connection.query('DELETE FROM libros_pendientes', () => {})
+  connection.query('DELETE FROM tutoriales_pendientes', () => {})
+  connection.query('DELETE FROM editoriales', () => {})
+  connection.query('DELETE FROM idiomas', () => {})
+  connection.query('DELETE FROM temas', () => {})
+  connection.query('DELETE FROM fabricantes', () => {})
+}
+
+const fillEditoriales = () => {
+  connection.query('INSERT INTO editoriales SET ?', { id: 1, nombre: "Editorial 1" }, () => { })       
+  connection.query('INSERT INTO editoriales SET ?', { id: 2, nombre: "Editorial 2" }, () => { })       
+  connection.query('INSERT INTO editoriales SET ?', { id: 3, nombre: "Editorial 3" }, () => { })       
+  connection.query('INSERT INTO editoriales SET ?', { id: 4, nombre: "Editorial 4" }, () => { })            
+}
+
 module.exports = {
-  URL_API,
-  DB_HOST,
-  DB_NAME,
-  DB_PASSWORD,
-  DB_USER,
-  connection
+  URL_API,  
+  connection,
+  cleanDB,
+  fillEditoriales
 }
