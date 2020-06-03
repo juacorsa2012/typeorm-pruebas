@@ -1,6 +1,7 @@
 import {Entity, PrimaryGeneratedColumn, Column, Unique, OneToMany} from "typeorm";
 import { MaxLength, IsNotEmpty } from "class-validator";
 import { LibroPendiente } from "./LibroPendiente";
+import { Libro } from "./Libro";
 
 @Entity('editoriales')
 @Unique(['nombre'])
@@ -15,4 +16,7 @@ export class Editorial {
 
     @OneToMany(() => LibroPendiente, libro => libro.editorial)
     libros_pendientes: LibroPendiente[]
+
+    @OneToMany(() => Libro, libro => libro.editorial)
+    libros: Libro[]
 }
