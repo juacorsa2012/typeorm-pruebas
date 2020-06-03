@@ -34,6 +34,12 @@
       "start": "ts-node src/index.ts",
       "tsc": "tsc",
       "dev": "set debug=* && ts-node-dev --respawn --transpileOnly ./src/index.ts",
-      "test": "cls && mocha --exit --watch"
+      "test": "cls && mocha --exit --watch",
+      "test:temas": "cls && mocha ./test/temas.controller.js --exit",
+      "test:idiomas": "cls && mocha ./test/idiomas.controller.js --exit",
+      "test:fabricantes": "cls && mocha ./test/fabricantes.controller.js --exit",
+      "test:editoriales": "cls && mocha ./test/editoriales.controller.js --exit",
+      "test:libros-pendientes": "cls && mocha ./test/libros-pendientes.controller.js --exit",
+      "test:tutoriales-pendientes": "cls && mocha ./test/tutoriales-pendientes.controller.js --exit"
    }
 }

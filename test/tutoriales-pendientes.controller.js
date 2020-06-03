@@ -1,28 +1,19 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const expect = require('chai').expect;
-const config = require('./config')
+const { URL_API, cleanDB, fillFabricantes, fillTutorialesPendientes } = require('./config')
 
 chai.use(chaiHttp);
 
-const url = config.URL_API
-
 describe('API /TutorialesPendientes', () => {    
     before(function() {           
-        config.connection.query('DELETE FROM tutoriales_pendientes', () => {})
-        config.connection.query('DELETE FROM fabricantes', () => {})                          
-        config.connection.query('INSERT INTO fabricantes SET ?', {id: 1, nombre: "Fabricante 1" }, () => {})       
-        config.connection.query('INSERT INTO fabricantes SET ?', {id: 2, nombre: "Fabricante 2" }, () => {})      
-        config.connection.query('INSERT INTO tutoriales_pendientes SET ?', { 
-            id: 1, titulo: "Titulo 1", observaciones: "Observaciones 1", fabricanteId: 1  }, () => {}
-        )       
-        config.connection.query('INSERT INTO tutoriales_pendientes SET ?', { 
-            id: 2, titulo: "Titulo 2", observaciones: "Observaciones 2", fabricanteId: 2  }, () => {}
-        )                
+        cleanDB()
+        fillFabricantes()
+        fillTutorialesPendientes()
     }) 
 
     it("debe devolver todos los tutoriales pendientes", function (done) {
-        chai.request(url).get('/tutoriales-pendientes').end((err, res) => {
+        chai.request(URL_API).get('/tutoriales-pendientes').end((err, res) => {
             if (err) done(err);
             expect(res).to.have.status(200)
             expect(res.body).to.have.property('success').to.be.equal(true)
@@ -33,7 +24,7 @@ describe('API /TutorialesPendientes', () => {
     });
 
     it("debe devolver todos los tutoriales pendientes filtrado por un fabricante", function (done) {
-        chai.request(url).get('/tutoriales-pendientes').query({fabricante: 1}).end((err, res) => {
+        chai.request(URL_API).get('/tutoriales-pendientes').query({fabricante: 1}).end((err, res) => {
             if (err) done(err);
             expect(res).to.have.status(200)
             expect(res.body).to.have.property('success').to.be.equal(true)
@@ -44,7 +35,7 @@ describe('API /TutorialesPendientes', () => {
     });
 
     it("debe devolver un tutorial", function (done) {
-        chai.request(url).get('/tutoriales-pendientes/1').end((err, res) => {
+        chai.request(URL_API).get('/tutoriales-pendientes/1').end((err, res) => {
             if (err) done(err);
             expect(res).to.have.status(200)
             expect(res.body).to.have.property('success').to.be.equal(true)
@@ -58,7 +49,7 @@ describe('API /TutorialesPendientes', () => {
     });
 
     it("debe devolver un error 404 al buscar un tutorial que no existe", function (done) {
-        chai.request(url).get('/tutoriales-pendientes/99').end((err, res) => {
+        chai.request(URL_API).get('/tutoriales-pendientes/99').end((err, res) => {
             if (err) done(err);
             expect(res).to.have.status(404)
             expect(res.body).to.have.property('success').to.be.equal(false)   
@@ -68,7 +59,7 @@ describe('API /TutorialesPendientes', () => {
     });  
 
     it("debe devolver el total de tutoriales registrados", function (done) {
-        chai.request(url).get('/tutoriales-pendientes/count').end((err, res) => {
+        chai.request(URL_API).get('/tutoriales-pendientes/count').end((err, res) => {
             if (err) done(err);
             expect(res).to.have.status(200)
             expect(res.body).to.have.property('success').to.be.equal(true)
@@ -80,7 +71,7 @@ describe('API /TutorialesPendientes', () => {
     it("debe insertar un nuevo tutorial", function (done) {
         const tutorial = { titulo: 'Titulo 1', observaciones: 'Observaciones', fabricante: 1 }
 
-        chai.request(url).post('/tutoriales-pendientes').send(tutorial).end((err, res) => {  
+        chai.request(URL_API).post('/tutoriales-pendientes').send(tutorial).end((err, res) => {  
             if (err) done(err);      
             expect(res).to.have.status(201)
             expect(res.body).to.have.property('success').to.be.equal(true)      
@@ -91,7 +82,7 @@ describe('API /TutorialesPendientes', () => {
     it("debe insertar un nuevo tutorial aunque no indiquemos las observaciones", function (done) {
         const tutorial = { titulo: 'Titulo 1', observaciones: '', fabricante: 1 }
 
-        chai.request(url).post('/tutoriales-pendientes').send(tutorial).end((err, res) => {  
+        chai.request(URL_API).post('/tutoriales-pendientes').send(tutorial).end((err, res) => {  
             if (err) done(err);      
             expect(res).to.have.status(201)
             expect(res.body).to.have.property('success').to.be.equal(true)      
@@ -102,7 +93,7 @@ describe('API /TutorialesPendientes', () => {
     it("debe devolver un error 400 si intentamos insertar un tutorial sin título", function (done) {
         const tutorial = { titulo: '', observaciones: 'Observaciones', fabricante: 1 }
 
-        chai.request(url).post('/tutoriales-pendientes').send(tutorial).end((err, res) => {  
+        chai.request(URL_API).post('/tutoriales-pendientes').send(tutorial).end((err, res) => {  
             if (err) done(err);      
             expect(res).to.have.status(400)
             expect(res.body).to.have.property('success').to.be.equal(false)      
@@ -113,7 +104,7 @@ describe('API /TutorialesPendientes', () => {
     it("debe devolver un error 400 si intentamos insertar un tutorial sin fabricante", function (done) {
         const tutorial = { titulo: 'Titulo 1', observaciones: '', fabricante: '' }
 
-        chai.request(url).post('/tutoriales-pendientes').send(tutorial).end((err, res) => {  
+        chai.request(URL_API).post('/tutoriales-pendientes').send(tutorial).end((err, res) => {  
             if (err) done(err);      
             expect(res).to.have.status(400)
             expect(res.body).to.have.property('success').to.be.equal(false)   
@@ -125,7 +116,7 @@ describe('API /TutorialesPendientes', () => {
     it("debe actualizar un tutorial existente", function (done) {
         const tutorial = { titulo: 'Titulo 1', observaciones: 'Observaciones', fabricante: 1 }
 
-        chai.request(url).put('/tutoriales-pendientes/1').send(tutorial).end((err, res) => {  
+        chai.request(URL_API).put('/tutoriales-pendientes/1').send(tutorial).end((err, res) => {  
             if (err) done(err);      
             expect(res).to.have.status(201)
             expect(res.body).to.have.property('success').to.be.equal(true)      
@@ -136,7 +127,7 @@ describe('API /TutorialesPendientes', () => {
     it("debe devolver un error 400 al intentar actualizar un tutorial sin título", function (done) {
         const tutorial = { titulo: '', observaciones: 'Observaciones', fabricante: 1 }
 
-        chai.request(url).put('/tutoriales-pendientes/1').send(tutorial).end((err, res) => {  
+        chai.request(URL_API).put('/tutoriales-pendientes/1').send(tutorial).end((err, res) => {  
             if (err) done(err);      
             expect(res).to.have.status(400)
             expect(res.body).to.have.property('success').to.be.equal(false)    
@@ -147,7 +138,7 @@ describe('API /TutorialesPendientes', () => {
     it("debe devolver un error 400 al intentar actualizar un tutorial sin fabricante", function (done) {
         const tutorial = { titulo: 'Titulo 1', observaciones: 'Observaciones', fabricante: '' }
 
-        chai.request(url).put('/tutoriales-pendientes/1').send(tutorial).end((err, res) => {  
+        chai.request(URL_API).put('/tutoriales-pendientes/1').send(tutorial).end((err, res) => {  
             if (err) done(err);      
             expect(res).to.have.status(400)
             expect(res.body).to.have.property('success').to.be.equal(false)    
@@ -158,7 +149,7 @@ describe('API /TutorialesPendientes', () => {
     it("debe devolver un error 404 al intentar actualizar un tutorial inexistente", function (done) {
         const tutorial = { titulo: 'Titulo 1', observaciones: 'Observaciones', fabricante: 1 }
 
-        chai.request(url).put('/tutoriales-pendientes/99').send(tutorial).end((err, res) => {  
+        chai.request(URL_API).put('/tutoriales-pendientes/99').send(tutorial).end((err, res) => {  
             if (err) done(err);      
             expect(res).to.have.status(404)
             expect(res.body).to.have.property('success').to.be.equal(false)  
@@ -168,7 +159,7 @@ describe('API /TutorialesPendientes', () => {
       });
 
       it("debe borrar un tutorial", function (done) {        
-        chai.request(url).delete('/tutoriales-pendientes/1').end((err, res) => {  
+        chai.request(URL_API).delete('/tutoriales-pendientes/1').end((err, res) => {  
             if (err) done(err);      
             expect(res).to.have.status(200)
             expect(res.body).to.have.property('success').to.be.equal(true)  
@@ -177,8 +168,8 @@ describe('API /TutorialesPendientes', () => {
         });
       });
 
-      it("debe borrar un tutorial", function (done) {        
-        chai.request(url).delete('/tutoriales-pendientes/9999').end((err, res) => {  
+      it("debe devolver un error 404 si queremos borrar un tutorial que no existe", function (done) {        
+        chai.request(URL_API).delete('/tutoriales-pendientes/9999').end((err, res) => {  
             if (err) done(err);      
             expect(res).to.have.status(404)
             expect(res.body).to.have.property('success').to.be.equal(false)  
@@ -186,5 +177,4 @@ describe('API /TutorialesPendientes', () => {
             done();
         });
       });         
-
 })

@@ -1,23 +1,18 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const expect = require('chai').expect;
-const config = require('./config')
+const { URL_API, cleanDB, fillTemas } = require('./config')
 
 chai.use(chaiHttp);
 
-const url= config.URL_API
-
 describe('API /Temas', () => {    
   before(function() {          
-    config.connection.query('DELETE FROM temas', () => {})                              
-    config.connection.query('INSERT INTO temas SET ?', { id: 1, nombre: "Tema 1" }, () => {})       
-    config.connection.query('INSERT INTO temas SET ?', { id: 2, nombre: "Tema 2" }, () => {})       
-    config.connection.query('INSERT INTO temas SET ?', { id: 3, nombre: "Tema 3" }, () => {})       
-    config.connection.query('INSERT INTO temas SET ?', { id: 4, nombre: "Tema 4" }, () => {})            
+    cleanDB()
+    fillTemas()
   }) 
 
   it("debe devolver todos los temas", function (done) {
-    chai.request(url).get('/temas').end((err, res) => {
+    chai.request(URL_API).get('/temas').end((err, res) => {
         if (err) done(err);
         expect(res).to.have.status(200)
         expect(res.body).to.have.property('success').to.be.equal(true)
@@ -28,7 +23,7 @@ describe('API /Temas', () => {
   });
 
   it("debe devolver un tema", function (done) {
-    chai.request(url).get('/temas/1').end((err, res) => {
+    chai.request(URL_API).get('/temas/1').end((err, res) => {
         if (err) done(err);
         expect(res).to.have.status(200)
         expect(res.body).to.have.property('success').to.be.equal(true)
@@ -40,7 +35,7 @@ describe('API /Temas', () => {
   });
 
   it("debe devolver un error 404 al buscar un tema que no existe", function (done) {
-    chai.request(url).get('/temas/99').end((err, res) => {
+    chai.request(URL_API).get('/temas/99').end((err, res) => {
         if (err) done(err);
         expect(res).to.have.status(404)
         expect(res.body).to.have.property('success').to.be.equal(false)      
@@ -49,7 +44,7 @@ describe('API /Temas', () => {
   });
 
   it("debe devolver el total de temas registrados", function (done) {
-    chai.request(url).get('/temas/count').end((err, res) => {
+    chai.request(URL_API).get('/temas/count').end((err, res) => {
         if (err) done(err);
         expect(res).to.have.status(200)
         expect(res.body).to.have.property('success').to.be.equal(true)
@@ -60,7 +55,7 @@ describe('API /Temas', () => {
   
   it("debe insertar un nuevo tema", function (done) {
     const nombre = 'Tema 5'
-    chai.request(url).post('/temas').send({nombre}).end((err, res) => {  
+    chai.request(URL_API).post('/temas').send({nombre}).end((err, res) => {  
         if (err) done(err);      
         expect(res).to.have.status(201)
         expect(res.body).to.have.property('success').to.be.equal(true)      
@@ -70,7 +65,7 @@ describe('API /Temas', () => {
   
   it("debe devolver un error 400 si insertamos un tema sin nombre", function (done) {
     const nombre = ''
-    chai.request(url).post('/temas').send({nombre}).end((err, res) => {  
+    chai.request(URL_API).post('/temas').send({nombre}).end((err, res) => {  
         if (err) done(err);      
         expect(res).to.have.status(400)
         expect(res.body).to.have.property('success').to.be.equal(false)      
@@ -80,7 +75,7 @@ describe('API /Temas', () => {
 
   it("debe devolver un error 400 si insertamos un tema con un nombre superior a 40 caracteres", function (done) {
     const nombre = Array(50).join("a")
-    chai.request(url).post('/temas').send({nombre}).end((err, res) => {  
+    chai.request(URL_API).post('/temas').send({nombre}).end((err, res) => {  
         if (err) done(err);      
         expect(res).to.have.status(400)
         expect(res.body).to.have.property('success').to.be.equal(false)      
@@ -90,7 +85,7 @@ describe('API /Temas', () => {
 
   it("debe devolver un error 400 si insertamos un tema ya existente", function (done) {
     const nombre = 'Tema 1'
-    chai.request(url).post('/temas').send({nombre}).end((err, res) => {  
+    chai.request(URL_API).post('/temas').send({nombre}).end((err, res) => {  
         if (err) done(err);      
         expect(res).to.have.status(409)
         expect(res.body).to.have.property('success').to.be.equal(false)      
@@ -100,7 +95,7 @@ describe('API /Temas', () => {
 
   it("debe actualizar un tema", function (done) {
     const nombre = 'Tema 99'    
-    chai.request(url).put('/temas/1').send({ nombre }).end((err, res) => {  
+    chai.request(URL_API).put('/temas/1').send({ nombre }).end((err, res) => {  
         if (err) done(err);      
         expect(res).to.have.status(201)
         expect(res.body).to.have.property('success').to.be.equal(true)      
@@ -110,7 +105,7 @@ describe('API /Temas', () => {
 
   it("debe devolver un error 404 si no existe el tema a actualizar", function (done) {
     const nombre = 'Tema 99'    
-    chai.request(url).put('/temas/1000').send({ nombre }).end((err, res) => {  
+    chai.request(URL_API).put('/temas/1000').send({ nombre }).end((err, res) => {  
         if (err) done(err);      
         expect(res).to.have.status(404)
         expect(res.body).to.have.property('success').to.be.equal(false)      
@@ -120,7 +115,7 @@ describe('API /Temas', () => {
 
   it("debe devolver un error 400 si intentamos actualizar un tema sin nombre", function (done) {
     const nombre = ''    
-    chai.request(url).put('/temas/1').send({nombre}).end((err, res) => {  
+    chai.request(URL_API).put('/temas/1').send({nombre}).end((err, res) => {  
         if (err) done(err);      
         expect(res).to.have.status(400)
         expect(res.body).to.have.property('success').to.be.equal(false)      
@@ -130,7 +125,7 @@ describe('API /Temas', () => {
 
   it("debe devolver un error 400 si intentamos actualizar un tema con nombre existente", function (done) {
     const nombre = 'Tema 2'    
-    chai.request(url).put('/temas/1').send({nombre}).end((err, res) => {  
+    chai.request(URL_API).put('/temas/1').send({nombre}).end((err, res) => {  
         if (err) done(err);      
         expect(res).to.have.status(400)
         expect(res.body).to.have.property('success').to.be.equal(false)      
@@ -140,7 +135,7 @@ describe('API /Temas', () => {
 
   it("debe devolver un error 400 si intentamos actualizar un tema con nombre superior a 40 caracteres", function (done) {
     const nombre = Array(50).join("a") 
-    chai.request(url).put('/temas/1').send({nombre}).end((err, res) => {  
+    chai.request(URL_API).put('/temas/1').send({nombre}).end((err, res) => {  
         if (err) done(err);      
         expect(res).to.have.status(400)
         expect(res.body).to.have.property('success').to.be.equal(false)      
