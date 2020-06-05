@@ -67,6 +67,13 @@ export default class Util {
         }
         else if (errors[0].constraints['isNotEmpty']) {
             return errors[0].constraints['isNotEmpty']
-        } else return ''
+        } 
+        else if (errors[0].constraints['isInt']) {
+            return errors[0].constraints['isInt']
+        }        
+        else if (errors[0].constraints['min']) {
+            return errors[0].constraints['min']
+        }              
+        else return 'Error de validación no contorlado'
     }     
 }   

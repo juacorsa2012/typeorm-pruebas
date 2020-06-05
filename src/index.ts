@@ -10,6 +10,8 @@ import fabricantesRoutes from './routes/fabricantes'
 import idiomasRoutes from './routes/idiomas'
 import tutorialesPendientesRoutes from './routes/tutoriales-pendientes'
 import editorialesRoutes from './routes/editoriales'
+import librosRoutes from './routes/libros'
+//import tutorialesRoutes from './routes/tutoriales'
 
 const PORT = process.env.PORT || 3000
 
@@ -26,6 +28,8 @@ const server = createConnection().then(() => {
     app.use('/api', fabricantesRoutes)
     app.use('/api', tutorialesPendientesRoutes)
     app.use('/api', editorialesRoutes)
+    app.use('/api', librosRoutes)
+    //app.use('/api', tutorialesRoutes)
     
     app.listen(PORT, () => console.log(`Server http://localhost:${PORT} running ...`))
 }).catch(error => console.log(error));

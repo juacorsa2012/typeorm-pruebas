@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, Index, JoinColumn, OneToOne, ManyToOne } from "typeorm"
-import { MaxLength, IsNotEmpty } from "class-validator"
+import { MaxLength, IsNotEmpty, IsInt, Min } from "class-validator"
 import { Fabricante } from  "./Fabricante"
 import { Idioma } from "./Idioma";
 import { Tema } from "./Tema";
@@ -16,11 +16,14 @@ export class Tutorial {
     titulo: string;
 
     @Column({ type: "int", nullable: false })   
-    @IsNotEmpty({ message: 'La duración es un campo requerido' })       
+    @IsNotEmpty({ message: 'La duración es un campo requerido' })    
+    @IsInt({ message: 'La duración no tiene un formato correcto' })    
+    @Min(1, { message: 'La duración debe ser al menos de 1 minuto' })   
     duracion: number;
 
     @Column({ type: "int", nullable: false })   
     @IsNotEmpty({ message: 'El año de publicación es un campo requerido' })       
+    @IsInt({ message: 'El año de publicación no tiene un formato correcto' })    
     publicado: number;
 
     @Column({ type: "varchar", length: 20, nullable: true })   

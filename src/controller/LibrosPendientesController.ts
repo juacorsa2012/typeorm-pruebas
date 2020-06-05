@@ -14,7 +14,7 @@ export class LibrosPendientesController {
 
         const query = librosPendientesRepository
             .createQueryBuilder('libro')            
-            .leftJoinAndSelect("libro.editorial", "editorial")
+            .leftJoinAndSelect("libro.editorial", "editorial")            
 
         if (titulo) {
             query.andWhere('libro.titulo LIKE :titulo', { titulo: `%${titulo}%` })

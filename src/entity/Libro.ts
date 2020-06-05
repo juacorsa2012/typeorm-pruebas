@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index, JoinColumn, OneToOne, ManyToOne } from "typeorm"
-import { MaxLength, IsNotEmpty } from "class-validator"
+import { Entity, PrimaryGeneratedColumn, Column, Index, ManyToOne } from "typeorm"
+import { MaxLength, IsNotEmpty, IsInt, Min } from "class-validator"
 import { Editorial } from  "./Editorial"
 import { Idioma } from "./Idioma";
 import { Tema } from "./Tema";
@@ -16,11 +16,14 @@ export class Libro {
     titulo: string;
 
     @Column({ type: "int", nullable: false })   
-    @IsNotEmpty({ message: 'Las páginas es un campo requerido' })       
+    @IsNotEmpty({ message: 'Las páginas es un campo requerido' })   
+    @IsInt({ message: 'El número de páginas no tiene un formato correcto' })    
+    @Min(1, { message: 'El número de páginas debe ser al menos de 1' })
     paginas: number;
 
     @Column({ type: "int", nullable: false })   
     @IsNotEmpty({ message: 'El año de publicación es un campo requerido' })       
+    @IsInt({ message: 'El año de publicación no tiene un formato correcto' })    
     publicado: number;
 
     @Column({ type: "text", nullable: true })
