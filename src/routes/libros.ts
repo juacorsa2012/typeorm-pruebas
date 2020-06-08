@@ -6,14 +6,8 @@ const router = Router()
 router.get('/libros', LibrosController.obtenerLibros)
 router.get('/libros/count', LibrosController.contarLibros)
 router.post('/libros', LibrosController.crearLibro)
+router.get('/libros/:id(\\d+)/', LibrosController.obtenerLibro)
+router.delete('/libros/:id(\\d+)/', LibrosController.borrarLibro)
+router.put('/libros/:id(\\d+)/', LibrosController.actualizarLibro)
 
-
-
-/*
-router.get('/libros-pendientes/:id(\\d+)/', LibrosPendientesController.obtenerLibro)
-
-router.delete('/libros-pendientes/:id(\\d+)/', LibrosPendientesController.borrarLibro)
-router.put('/libros-pendientes/:id(\\d+)/', LibrosPendientesController.actualizarLibro)
-
-*/
 export default router

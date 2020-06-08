@@ -18,7 +18,7 @@ export class Libro {
     @Column({ type: "int", nullable: false })   
     @IsNotEmpty({ message: 'Las páginas es un campo requerido' })   
     @IsInt({ message: 'El número de páginas no tiene un formato correcto' })    
-    @Min(1, { message: 'El número de páginas debe ser al menos de 1' })
+    @Min(1, { message: 'El libro debe tener al menos una página' })
     paginas: number;
 
     @Column({ type: "int", nullable: false })   

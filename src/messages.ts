@@ -4,6 +4,7 @@ export const LIBRO_NO_ENCONTRADO = 'El libro no existe en la base de datos'
 export const LIBRO_BORRADO_CORRECTAMENTE = 'El libro se ha borrado de la base de datos correctamente'
 export const LIBRO_ACTUALIZADO_CORRECTAMENTE = 'Libro actualizado correctamente'
 export const LIBRO_REGISTRADO_CORRECTAMENTE = 'Libro registrado correctamente'
+export const LIBRO_PUBLICADO_INCORRECTO = 'El año de publicación no puede ser posterior al año en curso'
 
 export const TEMA_REGISTRADO_CORRECTAMENTE = 'Tema registrado correctamente'
 export const TEMA_YA_EXISTE = 'Atención, el tema ya existe en la base de  datos'

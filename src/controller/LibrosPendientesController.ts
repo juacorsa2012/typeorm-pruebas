@@ -53,7 +53,7 @@ export class LibrosPendientesController {
     static obtenerLibro = async (req: Request, res: Response) => {
         const { id } = req.params        
 
-        const existe = await Util.ExisteLibro(+id)
+        const existe = await Util.ExisteLibroPendiente(+id)
 
         if (!existe) {
             return res.status(HttpStatus.NOT_FOUND).json({ 
@@ -136,11 +136,9 @@ export class LibrosPendientesController {
     }
 
     static borrarLibro = async (req: Request, res: Response) => {
-        const { id } = req.params     
-        
-        const existe = await Util.ExisteEditorial(+id)
+        const { id } = req.params                    
 
-        if (!existe) {
+        if (! await Util.ExisteLibroPendiente(+id)) {
             return res.status(HttpStatus.NOT_FOUND).json({ 
                 success: false, 
                 message: Message.LIBRO_NO_ENCONTRADO              
@@ -165,20 +163,16 @@ export class LibrosPendientesController {
     static actualizarLibro = async (req: Request, res: Response) => {
         const { id } = req.params             
         
-        let existe = await Util.ExisteLibro(+id)
-
-        if (!existe) {
+        if (! await Util.ExisteLibroPendiente(+id)) {
             return res.status(HttpStatus.NOT_FOUND).json({ 
                 success: false, 
                 message: Message.LIBRO_NO_ENCONTRADO              
             })
         }
 
-        const { titulo, observaciones, editorial } = req.body
+        const { titulo, observaciones, editorial } = req.body        
 
-        existe = await Util.ExisteEditorial(+editorial)
-
-        if (!existe) {
+        if (! await Util.ExisteEditorial(+editorial) ) {
             return res.status(HttpStatus.BAD_REQUEST).json({ 
                 success: false, 
                 message: Message.EDITORIAL_NO_EXISTE 
