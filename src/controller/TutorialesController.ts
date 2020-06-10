@@ -244,8 +244,3 @@ export class TutorialesController {
         }
     }
 }
-
-
-
-
-}

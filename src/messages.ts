@@ -32,3 +32,7 @@ export const IDIOMA_ACTUALIZADO_CORRECTAMENTE = 'Idioma actualizado correctament
 export const IDIOMA_YA_EXISTE = 'El idioma ya existe en la base de datos'
 export const IDIOMA_NO_ENCONTRADO = 'El idioma no existe en la base de datos'
 
+export const USUARIO_REGISTRADO_CORRECTAMENTE = 'Usuario registrado correctamente'
+export const USUARIO_YA_EXISTE = 'El usuario ya existe en la base de datos '
+
+export const CREDENCIALES_INCORRECTAS = 'El usuario o password son incorrectos'
